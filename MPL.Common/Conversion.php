@@ -6,6 +6,14 @@ namespace MPL\Common
   class Conversion
   {
     // Public functions
+    public static function ParseBoolean($data): int {
+      if (!self::TryParseBoolean($data, $returnValue)) {
+        throw new \Exception('The specified data is not a valid boolean');
+      }
+      
+      return $returnValue;
+    }
+
     public static function ParseFloat($data): int {
       if (!self::TryParseFloat($data, $returnValue)) {
         throw new \Exception('The specified data is not a valid float');
@@ -25,6 +33,38 @@ namespace MPL\Common
     public static function ParseString($data): int {
       if (!self::TryParseString($data, $returnValue)) {
         throw new \Exception('The specified data is not a valid string');
+      }
+      
+      return $returnValue;
+    }
+
+    public static function TryParseBoolean($data, ?bool &$value): bool {
+      $returnValue = false;
+      
+      if (self::TryParseInteger($data, $intValue)) {
+        $returnValue = true;
+        
+        if ($intValue === 0) {
+          $value = false;
+        } else {
+          $value = true;
+        }
+      } else if (self::TryParseString($data, $strValue)) {
+        switch (strtolower($strValue)) {
+          case 'false':
+          case 'n':
+          case 'no':
+            $returnValue = true;
+            $value = false;
+            break;
+          
+          case 'true':
+          case 'y':
+          case 'yes':
+            $returnValue = true;
+            $value = true;
+            break;
+        }
       }
       
       return $returnValue;
