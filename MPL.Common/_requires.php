@@ -7,6 +7,7 @@
   RelativeMapping::RelativeRequire('/MPL.Common/ErrorHandling.php');
   RelativeMapping::RelativeRequire('/MPL.Common/ObjectFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Page.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/Random.php');
   RelativeMapping::RelativeRequire('/MPL.Common/StringFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Website.php');
 
