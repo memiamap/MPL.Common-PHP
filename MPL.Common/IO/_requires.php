@@ -1,4 +1,4 @@
 <?php
-  use MPL\Common\RelativeMapping as RelativeMapping;
-  RelativeMapping::RelativeRequire('/MPL.Common/IO/File.php');
+use MPL\Common\RelativeMapping;
+RelativeMapping::RelativeRequire('/MPL.Common/IO/File.php');
 ?>
