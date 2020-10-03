@@ -6,7 +6,15 @@ namespace MPL\Common
   class Conversion
   {
     // Public functions
-    public static function ParseBoolean($data): int {
+    public static function ParseArray($data): array {
+      if (!self::TryParseBoolean($data, $returnValue)) {
+        throw new \Exception('The specified data is not a valid array');
+      }
+      
+      return $returnValue;
+    }
+
+    public static function ParseBoolean($data): bool {
       if (!self::TryParseBoolean($data, $returnValue)) {
         throw new \Exception('The specified data is not a valid boolean');
       }
@@ -14,7 +22,7 @@ namespace MPL\Common
       return $returnValue;
     }
 
-    public static function ParseFloat($data): int {
+    public static function ParseFloat($data): float {
       if (!self::TryParseFloat($data, $returnValue)) {
         throw new \Exception('The specified data is not a valid float');
       }
@@ -30,9 +38,25 @@ namespace MPL\Common
       return $returnValue;
     }
 
-    public static function ParseString($data): int {
+    public static function ParseString($data): string {
       if (!self::TryParseString($data, $returnValue)) {
         throw new \Exception('The specified data is not a valid string');
+      }
+      
+      return $returnValue;
+    }
+
+    public static function TryParseArray($data, ?array &$value, bool $failOnEmptyArray = true): bool {
+      $returnValue = false;
+      
+      if (self::TryParseString($data, $stringValue)) {
+        parse_str($data, $array);
+        if (is_array($array)) {
+          if (count($array) > 0 || !$failOnEmptyArray) {
+            $value = $array;
+            $returnValue = true;
+          }
+        }
       }
       
       return $returnValue;
