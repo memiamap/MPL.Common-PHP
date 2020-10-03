@@ -16,4 +16,5 @@
   RelativeMapping::RelativeRequire('/MPL.Common/IO/_requires.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Net/_requires.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Reflection/_requires.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/Serialisation/_requires.php');
 ?>
