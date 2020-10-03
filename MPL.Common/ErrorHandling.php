@@ -57,17 +57,21 @@ namespace MPL\Common
     }
 
     // Public functions
+    public static function Dump($data, ?string $comment = null): void {
+    	ob_start();
+      var_dump($data);
+      $contents = ob_get_contents();
+      ob_end_clean();
+      if ($comment) {
+        self::LogMessage($comment, $contents); 
+      } else {
+        self::LogMessage($contents); 
+      }
+    }
+
     public static function DumpArray(?array $data, ?string $comment = null): void {
       if ($data && count($data) > 0) {
-      	ob_start();
-        var_dump($data);
-        $contents = ob_get_contents();
-        ob_end_clean();
-        if ($comment) {
-          self::LogMessage($comment, $contents); 
-        } else {
-          self::LogMessage($contents); 
-        }
+        self::Dump($data, $comment);
       } else if ($comment) {
         self::LogMessage($comment);
       }
