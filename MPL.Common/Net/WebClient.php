@@ -190,6 +190,31 @@ namespace MPL\Common\Net
   	  return $returnValue;
   	}
 
+    public static function PageExists(string $url): bool {
+      $returnValue = false;
+
+      try {
+        // Configure and execute the request
+    		$request = self::initialiseCurl(WebClient::METHOD_GET, $url, WebClient::AUTHTYPE_NONE);
+    		curl_setopt($request, CURLOPT_NOBODY, true);
+    		curl_setopt($request, CURLOPT_FOLLOWLOCATION, true);
+    		$curlResponse = curl_exec($request);
+    		
+    		// Process the response and tidy up
+    		$httpStatus = curl_getinfo($request, CURLINFO_HTTP_CODE);
+    		curl_close($request);
+
+    		// Check for success state
+    		if ($httpStatus >= 200 && $httpStatus < 300) {
+    			$returnValue = true;
+    		}
+  		} catch (\Throwable $t) {
+  		  ErrorHandling::LogThrowable($t, "Unable to verify whether page '$url' exists");
+  		}
+  		
+  		return $returnValue;
+    }
+    
   	public static function PostString(string $url, string $postData, int $authType = WebClient::AUTHTYPE_NONE, ?string $authCode = null): ?string {
   	  $returnValue = null;
   	  
