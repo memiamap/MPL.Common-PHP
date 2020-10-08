@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace MPL\Common
 {
+    use MPL\Common\ErrorHandling;
   class RelativeMapping
   {
     // Public functions
@@ -74,7 +75,6 @@ namespace MPL\Common
     	} else if (isset($_SERVER['DOCUMENT_ROOT'])) {
     		$file = $_SERVER['DOCUMENT_ROOT'] . $file;
     	}
-
       if ($requireOnce) {
     	  require_once $file;
     	} else {

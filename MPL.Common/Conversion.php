@@ -67,7 +67,7 @@ namespace MPL\Common
       
       if (self::TryParseInteger($data, $intValue)) {
         $returnValue = true;
-        
+
         if ($intValue === 0) {
           $value = false;
         } else {

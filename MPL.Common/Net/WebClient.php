@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace MPL\Common\Net
 {
-  use MPL\Common\Conversion;
-  use MPL\Common\ErrorHandling;
+  use MPL\Common\{Conversion, ErrorHandling};
 
   class WebClient
   {
