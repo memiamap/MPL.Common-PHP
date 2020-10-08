@@ -2,6 +2,7 @@
   require_once 'RelativeMapping.php';
   use MPL\Common\RelativeMapping;
 
+  RelativeMapping::RelativeRequire('/MPL.Common/ArrayFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Conversion.php');
   RelativeMapping::RelativeRequire('/MPL.Common/DateFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/ErrorHandling.php');
