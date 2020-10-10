@@ -16,7 +16,7 @@ namespace MPL\Common
 
     public static function ParseBoolean($data): bool {
       if (!self::TryParseBoolean($data, $returnValue)) {
-        throw new \Exception('The specified data is not a valid boolean');
+        throw new \Exception("The specified data '{$data}' is not a valid boolean");
       }
       
       return $returnValue;
@@ -24,7 +24,7 @@ namespace MPL\Common
 
     public static function ParseFloat($data): float {
       if (!self::TryParseFloat($data, $returnValue)) {
-        throw new \Exception('The specified data is not a valid float');
+        throw new \Exception("The specified data '{$data}' is not a valid float");
       }
       
       return $returnValue;
@@ -32,7 +32,7 @@ namespace MPL\Common
 
     public static function ParseInteger($data): int {
       if (!self::TryParseInteger($data, $returnValue)) {
-        throw new \Exception('The specified data is not a valid integer');
+        throw new \Exception("The specified data '{$data}' is not a valid integer");
       }
       
       return $returnValue;
@@ -40,7 +40,7 @@ namespace MPL\Common
 
     public static function ParseString($data): string {
       if (!self::TryParseString($data, $returnValue)) {
-        throw new \Exception('The specified data is not a valid string');
+        throw new \Exception("The specified data '{$data}' is not a valid string");
       }
       
       return $returnValue;
