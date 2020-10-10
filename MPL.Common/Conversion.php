@@ -157,6 +157,8 @@ namespace MPL\Common
             }
           }
         }
+      } else if (is_float($data)) {
+        $returnValue = true;
       }
 
       if ($returnValue) {
