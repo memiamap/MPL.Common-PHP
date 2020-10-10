@@ -12,6 +12,10 @@ namespace MPL\Common
     public static function RemoveLinebreaks(string $source, string $replacement = ''): string {
       return preg_replace(self::STRING_REPLACE_LINEBREAKS, $replacement, $source);
     }
+    
+    public static function TrimTo(string $string, int $length): string {
+      return strlen($string) > $length ? substr($string, 0, $length) : $string;
+    }
   }
 }
 ?>
