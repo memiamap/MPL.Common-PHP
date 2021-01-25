@@ -112,7 +112,7 @@ namespace MPL\Common
       while ($t) {
         if ($i > 0) $message .= '||';
         $message .= $i++ . '[' . $t->getMessage() . ' at "' . $t->getFile() . '":' . $t->getLine() .']';
-        $t = $throwable->getPrevious();
+        $t = $t->getPrevious();
       }
 
       if ($comment) {
