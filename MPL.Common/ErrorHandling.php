@@ -6,10 +6,11 @@ namespace MPL\Common
   class ErrorHandling
   {
     // Decalartions
-    private static $hasRegisteredGlobalHandlers = false;
+    private static $displayErrorToConsole = false;
     private static $errorCallback;
+    private static $hasRegisteredGlobalHandlers = false;
 
-    // Private functions#
+    // Private functions
     private static function onErrorCallback(bool $autoExit = true): void {
       try {
         if (self::$errorCallback) {
@@ -36,6 +37,10 @@ namespace MPL\Common
     private static function gloablExceptionHandler(?\Throwable $ex): void {
       if ($ex) {
         self::LogThrowable($ex, 'Global Exception Handler');
+        if (self::$displayErrorToConsole) {
+          $output = self::GetExceptionOutput($ex, true);
+          echo $output;
+        }
       }
       self::onErrorCallback();
     }
@@ -80,7 +85,8 @@ namespace MPL\Common
     public static function EnableErrorLogging(string $logFolder, bool $displayErrors = false): void {
     	ini_set('log_errors', '1');
     	ini_set('display_errors', $displayErrors ? '1' : '0');
-    	
+      self::$displayErrorToConsole = $displayErrors;
+
     	$currentPath = str_ireplace('.php', '', strtolower(Page::GetRunningPageUrl()));
     	if ($currentPath != 'index') {
     		$logPath = '';
@@ -96,6 +102,23 @@ namespace MPL\Common
     	ini_set('error_log' , $logPath);
     }
 
+    public static function GetExceptionOutput(\Throwable $ex, bool $recursive = false) : string {
+      $count = 1;
+      
+      $returnValue = 'Exception caught by Global Exception Handler: ' . Environment::NewLine(2);
+      
+      while ($ex) {
+        $returnValue .= $count . ':' . $ex->getMessage() . Environment::NewLine(2);
+        $returnValue .= 'in ' . $ex->getFile() . ':' . $ex->getLine() . Environment::NewLine(2);
+        $returnValue .= 'Stack Trace:' . Environment::NewLine(1);
+        $returnValue .= str_replace("\n", Environment::NewLine(1), $ex->getTraceAsString()) . Environment::NewLine(2);
+        $ex = $recursive ? $ex->getPrevious() : null;
+        $count++;
+      }
+
+      return $returnValue;
+    }
+    
     public static function LogMessage(string $error, ?string $comment = null): void {
       $function = self::getOriginatorFunction();
       $comment = $comment ? ",$comment" : '';
