@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MPL\Common\Net
 {
   use MPL\Common\{Conversion, ErrorHandling};
+  use MPL\Common\Serialisation\JsonSerialisation;
 
   class WebClient
   {
@@ -77,7 +78,7 @@ namespace MPL\Common\Net
   	  curl_setopt($returnValue, CURLOPT_HTTPHEADER, self::getHeaders($method, $authType, $authCode));
   		if ($method == WebClient::METHOD_POST) {
         curl_setopt($returnValue, CURLOPT_POST, 1);
-        curl_setopt($returnValue, CURLOPT_POSTFIELDS, $data);			
+        curl_setopt($returnValue, CURLOPT_POSTFIELDS, $data);
       }
 
   		return $returnValue;
@@ -177,15 +178,24 @@ namespace MPL\Common\Net
     }
   
     // Public functions
+    public static function GetObject(string $url, int $authType = WebClient::AUTHTYPE_NONE, ?string $authCode = null): ?object {
+      $data = self::GetString($url, $authType, $authCode);
+      if (!$data || !JsonSerialisation::TryDeserialise($data, $returnValue)) {
+        $returnValue = null;
+      }
+
+      return $returnValue;
+    }
+
   	public static function GetString(string $url, int $authType = WebClient::AUTHTYPE_NONE, ?string $authCode = null): ?string {
   	  $returnValue = null;
-  	  
+
       if (self::send(WebClient::METHOD_GET, $url, $authType, $authCode, null, $response)) {
         $returnValue = $response;
       } else {
   	    ErrorHandling::LogMessage("Failed to get string from '$url'");
       }
-  	  
+
   	  return $returnValue;
   	}
 
@@ -213,8 +223,8 @@ namespace MPL\Common\Net
   		
   		return $returnValue;
     }
-    
-  	public static function PostString(string $url, string $postData, int $authType = WebClient::AUTHTYPE_NONE, ?string $authCode = null): ?string {
+
+  	public static function PostString(string $url, ?string $postData, int $authType = WebClient::AUTHTYPE_NONE, ?string $authCode = null): ?string {
   	  $returnValue = null;
   	  
       if (self::send(WebClient::METHOD_POST, $url, $authType, $authCode, $postData, $response)) {
@@ -225,6 +235,15 @@ namespace MPL\Common\Net
   	  
   	  return $returnValue;
   	}
+
+    public static function PostStringToObject(string $url, string $postData, int $authType = WebClient::AUTHTYPE_NONE, ?string $authCode = null): ?object {
+      $data = self::PostString($url, $postData, $authType, $authCode);
+      if (!$data || !JsonSerialisation::TryDeserialise($data, $returnValue)) {
+        $returnValue = null;
+      }
+
+      return $returnValue;
+    }
 
     public static function SetUserAgent(string $userAgent): void {
       self::$userAgent = $userAgent;
