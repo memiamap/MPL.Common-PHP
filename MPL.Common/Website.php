@@ -65,6 +65,24 @@ namespace MPL\Common
       
       return $returnValue;
     }
+    
+    public static function Redirect(string $redirectURL): void {
+    	if (headers_sent()) {
+    		echo "<script>window.location = '{$redirectURL}'</script>";
+    		echo "<noscript><meta http-equiv='refresh' content='0;url={$redirectURL}' /></noscript>";
+    	} else {
+    		header('Location: ' . $redirectURL); 
+    		exit;
+    	}
+    }
+
+    public static function RedirectToHomepage(): void {
+      self::Redirect(self::$BaseLocation);
+    }
+  
+    public static function RedirectWithRelativeURL(string $relativeURL): void {
+      self::Redirect(RelativeMapping::MapRelativeUrl($relativeURL));
+    }
   }
 
   Website::__init();
