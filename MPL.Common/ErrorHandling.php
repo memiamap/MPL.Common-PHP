@@ -11,40 +11,40 @@ namespace MPL\Common
     private static $hasRegisteredGlobalHandlers = false;
 
     // Private functions
-    private static function onErrorCallback(bool $autoExit = true): void {
-      try {
-        if (self::$errorCallback) {
-          (self::$errorCallback)();
-        }
-      } catch (\Throwable $t) {
-        // Swallow this exception as nothing can be done with it for risk of a stack overflow
-      }
-      
-      if ($autoExit) {
-        exit();
+    private static function displayErrorToConsole(string $error): void {
+      if (self::$displayErrorToConsole) {
+        $output = ob_get_clean();
+        echo 'Error caught by Global Error Handler: ' . Environment::NewLine(2);
+        echo $error . Environment::NewLine(2);
+        echo $output;
       }
     }
-    
-    private static function globalErrorHandler(int $errno, string $errstr, ?string $errfile = null, ?int $errline = null): bool {
+
+    private static function displayExceptionToConsole(\Throwable $ex): void {
+      if (self::$displayErrorToConsole) {
+        $output = self::GetExceptionOutput($ex, true);
+        echo $output;
+      }
+    }
+
+    private static function globalErrorHandler(int $errno, string $errstr, ?string $errfile = null, ?int $errline = null): ?bool {
       $message = $errstr;
       if ($errfile && $errline) {
         $message .= ' at "' . $errfile . '":' . $errline;
       }
       self::LogMessage('Global Error Handler', $message);
+      self::displayErrorToConsole($message);
       self::onErrorCallback();
     }
-    
+
     private static function gloablExceptionHandler(?\Throwable $ex): void {
       if ($ex) {
         self::LogThrowable($ex, 'Global Exception Handler');
-        if (self::$displayErrorToConsole) {
-          $output = self::GetExceptionOutput($ex, true);
-          echo $output;
-        }
+        self::displayExceptionToConsole($ex);
       }
       self::onErrorCallback();
     }
-    
+
     private static function getOriginatorFunction(): string {
       $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
       $returnValue = 'Unknown';
@@ -59,6 +59,20 @@ namespace MPL\Common
       }
 
       return $returnValue;
+    }
+
+    private static function onErrorCallback(bool $autoExit = true): void {
+      try {
+        if (self::$errorCallback) {
+          (self::$errorCallback)();
+        }
+      } catch (\Throwable $t) {
+        // Swallow this exception as nothing can be done with it for risk of a stack overflow
+      }
+      
+      if ($autoExit) {
+        exit();
+      }
     }
 
     // Public functions
