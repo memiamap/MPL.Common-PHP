@@ -9,6 +9,33 @@ namespace MPL\Common\Reflection
   class TypeCreator
   {
     // Public functions
+    public static function CreateType(string $fileName, string $className): ?object {
+      $isValid = true;
+      $returnValue = null;
+
+      try {
+    	  // Load the assembly from the filename
+    	  require_once $fileName;
+      } catch (\Throwable $t) {
+			  ErrorHandling::LogThrowable($t, 'Load assembly failed');
+			  throw new \Exception("Unable to load relative file '{$fileName}'");
+      }
+      
+      if (class_exists($className)) {
+        try {
+          // Create an instance of the type
+      	  $returnValue = new $className();
+        } catch (\Throwable $t) {
+  			  ErrorHandling::LogThrowable($t, 'Create type failed');        
+  			  throw new \Exception("Unable to create instance of class '{$className}'");
+        }
+      } else {
+			  throw new \Exception("The class '{$className}' does not exist");
+      }
+
+      return $returnValue;
+    }
+
     public static function CreateTypeRelative(string $fileName, string $className): ?object {
       $isValid = true;
       $returnValue = null;
@@ -18,17 +45,21 @@ namespace MPL\Common\Reflection
     	  RelativeMapping::RelativeRequire($fileName);
       } catch (\Throwable $t) {
 			  ErrorHandling::LogThrowable($t, 'Load assembly failed');
-			  throw new \Exception("Unable to load relative file $fileName");
+			  throw new \Exception("Unable to load relative file '{$fileName}'");
       }
       
-      try {
-        // Create an instance of the type
-    	  $returnValue = new $className();
-      } catch (\Throwable $t) {
-			  ErrorHandling::LogThrowable($t, 'Create type failed');        
-			  throw new \Exception("Unable to create instance of class $className");
+      if (class_exists($className)) {
+        try {
+          // Create an instance of the type
+      	  $returnValue = new $className();
+        } catch (\Throwable $t) {
+  			  ErrorHandling::LogThrowable($t, 'Create type failed');        
+  			  throw new \Exception("Unable to create instance of class '{$className}'");
+        }
+      } else {
+			  throw new \Exception("The class '{$className}' does not exist");
       }
-      
+
       return $returnValue;
     }
   }
