@@ -3,6 +3,7 @@
   use MPL\Common\RelativeMapping;
 
   RelativeMapping::RelativeRequire('/MPL.Common/ArrayFunctions.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/Client.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Conversion.php');
   RelativeMapping::RelativeRequire('/MPL.Common/CookieFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/DateFunctions.php');
