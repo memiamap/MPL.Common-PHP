@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace MPL\Common
 {
+  use MPL\Common\Conversion;
+
   class Website
   {
     // Declarations
@@ -26,6 +28,22 @@ namespace MPL\Common
     }
 
     // Public functions
+    public static function ParseGet(string $name, &$value): bool {
+      $returnValue = false;
+      
+      if (!empty($_GET) && isset($_GET[$name])) {
+        $value = $_GET[$name];
+        $returnValue = true;
+	    }
+	  
+	    return $returnValue;
+    }
+
+    public static function ParseGetToString(string $name, ?string &$value): bool {
+      return self::ParseGet($name, $rawValue) &&
+             Conversion::TryParseString($rawValue, $value);
+    }
+
     public static function ParsePhpInputToArray(?array &$output): bool {
       $output = null;
       $returnValue = false;
