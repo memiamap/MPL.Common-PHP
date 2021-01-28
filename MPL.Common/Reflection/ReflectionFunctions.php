@@ -8,31 +8,64 @@ namespace MPL\Common\Reflection
 
   class ReflectionFunctions
   {
+    // Private functions
+    public static function isClassInheritedFrom(string $typeName, string $baseTypeName): bool {
+      $returnValue = false;
+      
+      try {
+        $class = new \ReflectionClass($typeName);
+        while ($class) {
+          if ($class->getName() === $baseTypeName) {
+            $returnValue = true;
+            break;
+          } else {
+            $class = $class->getParentClass();
+          }
+        }
+      } catch (\Throwable $t) {
+        ErrorHandling::LogThrowable($t);
+        throw new \Exception("Unable to determine whether '{$typeName}' inherits from '{$baseClassName}'");
+      }
+
+      return $returnValue;
+    }
+
     // Public functions
-    public static function IsClassInheritedFrom(string $className, string $baseClassName): bool {
+    public static function IsTypeInheritedFrom(string $typeName, string $baseTypeName): bool {
       $returnValue = false;
 
-      if (class_exists($className)) {
-        if (class_exists($baseClassName)) {
-          try {
-            $class = new \ReflectionClass($className);
-            while ($class) {
-              if ($class->getName() === $baseClassName) {
-                $returnValue = true;
-                break;
-              } else {
-                $class = $class->getParentClass();
-              }
-            }
-          } catch (\Throwable $t) {
-            ErrorHandling::LogThrowable($t);
-            throw new \Exception("Unable to determine whether '{$className}' inherits from '{$baseClassName}'");
-          }
+      if (class_exists($typeName)) {
+        if (class_exists($baseTypeName)) {
+          $returnValue = self::isClassInheritedFrom($typeName, $baseTypeName);
         } else {
-          throw new \Exception("The specified base class '{$baseClassName}' is not defined");
+          throw new \Exception("The specified base type '{$baseTypeName}' is not defined");
         }
       } else {
-        throw new \Exception("The specified class '{$className}' is not defined");
+        // Check for scalar type comparison (i.e. type == baseType)
+        if (self::IsScalarType($typeName)) {
+          if (self::IsScalarType($baseTypeName)) {
+            if ($typeName == $baseTypeName) {
+              $returnValue = true;
+            }
+          } else {
+            throw new \Exception("The specified base type '{$baseTypeName}' is not defined");
+          }
+        } else {
+          throw new \Exception("The specified type '{$typeName}' is not defined");
+        }
+      }
+      
+      return $returnValue;
+    }
+    
+    public static function IsScalarType(string $typeName): bool {
+      $returnValue = false;
+
+      try {
+        $var = null;
+        settype($f, $typeName);
+        $returnValue = true;
+      } catch (\Throwable $t) {
       }
       
       return $returnValue;
