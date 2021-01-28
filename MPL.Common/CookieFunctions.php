@@ -55,12 +55,12 @@ namespace MPL\Common
       self::CreateCookieFromExpiryDays($name, '', -1);
     }
 
-    public static function GetCookieValue(string $name, ?string $value): bool {
+    public static function GetCookieValue(string $name, ?string &$value): bool {
     	$returnValue = false;
 
     	if (isset($_COOKIE[$name])) {
     		$value = $_COOKIE[$name];
-    		$returnValue= true;
+    		$returnValue = true;
     	}
 
     	return $returnValue;
