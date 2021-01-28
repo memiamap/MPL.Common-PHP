@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace MPL\Common
 {
+  use MPL\Common\IO\File;
+  
   class HtmlFunctions
   {
     // Public functions
@@ -12,6 +14,25 @@ namespace MPL\Common
     
     public static function GenerateScriptTag(string $scriptFilename): string {
   		return "<script src=\"{$scriptFilename}\"></script>";
+    }
+
+    public static function GenerateSvgInlineFromFile(string $path, ?string $class = null, ?string $id = null): string {
+    	$returnValue = File::LoadTextRelative($path);
+/*    	$physicalPath = str_replace('/', '||', $path);
+    	$physicalPath = mapRelativePath($physicalPath);
+    	$returnValue = file_get_contents($physicalPath);
+  */  
+      // Add the class element if specified	
+    	if ($class) {
+    		$returnValue = str_replace('<svg', '<svg class="' . $class . '"', $returnValue);
+    	}
+
+    	// Add the ID element if specified
+    	if ($id) {
+    		$returnValue = str_replace('<svg', '<svg id="' . $id . '"', $returnValue);
+    	}
+
+    	return $returnValue;
     }
   }
 }
