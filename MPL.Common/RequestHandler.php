@@ -217,7 +217,7 @@ namespace MPL\Common
       // Verify callable parameter
       if ($callable) {
         if (CallableFunctions::HasParameterCount($callable, 1) &&
-            ReflectionFunctions::IsClassInheritedFrom(CallableFunctions::GetParameterType($callable, 0), RequestPage::class)) {
+            ReflectionFunctions::IsTypeInheritedFrom(CallableFunctions::GetParameterType($callable, 0), RequestPage::class)) {
           $returnValue = $callable;
         } else if ($throwExceptionOnInvalid) {
           throw new \Exception("The specified callback is invalid");

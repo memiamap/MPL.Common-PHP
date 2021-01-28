@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace MPL\Common
 {
-  //use MPL\Common\{ErrorHandling, RelativeMapping};
   use MPL\Common\Configuration\PageConfigurationBase;
 
   abstract class RequestPage
@@ -15,9 +14,6 @@ namespace MPL\Common
     public function __construct() {
       $this->pageConfiguration = null;
     }
-
-    // Private functions
-
 
     // Protected functions
     protected function onGetPageHasFooter(): bool {
@@ -42,7 +38,7 @@ namespace MPL\Common
     }
 
     public abstract function RenderOutput(): void;
-    
+
     public function SetPageConfiguration(?PageConfigurationBase $pageConfiguration): void {
       $this->pageConfiguration = $pageConfiguration;
     }
