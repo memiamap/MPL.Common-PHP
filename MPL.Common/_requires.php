@@ -21,6 +21,7 @@
 
   RelativeMapping::RelativeRequire('/MPL.Common/Collections/_requires.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Configuration/_requires.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/Events/_requires.php');
   RelativeMapping::RelativeRequire('/MPL.Common/IO/_requires.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Net/_requires.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Reflection/_requires.php');
