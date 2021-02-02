@@ -9,6 +9,18 @@ namespace MPL\Common\Reflection
   class CallableFunctions
   {
     // Public functions
+    public static function GetParameterCount(callable $callable): int {
+      $returnValue = 0;
+
+      $rf = new \ReflectionFunction($callable);
+      $params = $rf->getParameters();
+      if (is_array($params)) {
+        $returnValue = count($params);
+      }
+
+      return $returnValue;
+    }
+
     public static function GetParameterType(callable $callable, int $parameterNumber): string {
       $returnValue = null;
       
@@ -35,6 +47,19 @@ namespace MPL\Common\Reflection
       }
       
       return $returnValue;
+    }
+    
+    public static function HasReturnValue(callable $callable): bool {
+      $returnValue = false;
+
+      $rf = new \ReflectionFunction($callable);
+      $returnType = $rf->getReturnType();
+      if ($returnType) {
+        $returnValue = true;
+      }
+      
+      return $returnValue;
+
     }
   }
 }
