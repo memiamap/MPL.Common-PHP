@@ -18,10 +18,7 @@ namespace MPL\Common
 
     public static function GenerateSvgInlineFromFile(string $path, ?string $class = null, ?string $id = null): string {
     	$returnValue = File::LoadTextRelative($path);
-/*    	$physicalPath = str_replace('/', '||', $path);
-    	$physicalPath = mapRelativePath($physicalPath);
-    	$returnValue = file_get_contents($physicalPath);
-  */  
+
       // Add the class element if specified	
     	if ($class) {
     		$returnValue = str_replace('<svg', '<svg class="' . $class . '"', $returnValue);

@@ -6,9 +6,9 @@ namespace MPL\Common
   class Environment
   {
     // Decalartions
-    private static $isConsole;
-    private static $isInitialised = false;
-    public static $NewLine;
+    private static bool $isConsole;
+    private static bool $isInitialised = false;
+    public static string $NewLine;
     
     // Public functions
     public static function __init() {
