@@ -5,6 +5,7 @@ namespace MPL\Common
 {
   use MPL\Common\{ErrorHandling, RelativeMapping};
   use MPL\Common\Configuration\PageConfigurationManager;
+  use MPL\Common\Events\EventWrapper;
   use MPL\Common\Reflection\{CallableFunctions, ReflectionFunctions, TypeCreator};
 
   class RequestHandler
@@ -15,19 +16,27 @@ namespace MPL\Common
     private const LOCATION_PAGEHEADER = 'PH';
     
     // Declarations
-    private $baseLocation;
-    private $locations = array();
-    private $namespace;
-    private $onCompletedRequestPageHandler;
-    private $onLoadRequestPageHandler;
-    private $onPostRenderRequestPageHandler;
-    private $onPreRenderRequestPageHandler;
-    private $pageConfigurationManager;
+    private ?string $baseLocation;
+    private array $locations = array();
+    private ?string $namespace;
+    private EventWrapper $onCompletedRequestPageHandler;
+    private EventWrapper $onConfigureRequestPageHandler;
+    private EventWrapper $onLoadRequestPageHandler;
+    private EventWrapper $onPostRenderRequestPageHandler;
+    private EventWrapper $onPreRenderRequestPageHandler;
+    private ?PageConfigurationManager $pageConfigurationManager;
 
     // Constructors
     public function __construct(string $baseLocation, ?string $namespace = null) {
       $this->baseLocation = '~' . ltrim(rtrim($baseLocation, '\\/'), '~') . '/';
       $this->namespace = StringFunctions::SurroundWith($namespace, '\\');
+
+      // Default event handlers
+      $this->onCompletedRequestPageHandler = EventWrapper::UnboundEventWrapper();
+      $this->onConfigureRequestPageHandler = EventWrapper::UnboundEventWrapper();
+      $this->onLoadRequestPageHandler = EventWrapper::UnboundEventWrapper();
+      $this->onPostRenderRequestPageHandler = EventWrapper::UnboundEventWrapper();
+      $this->onPreRenderRequestPageHandler = EventWrapper::UnboundEventWrapper();
     }
 
     // Private functions
@@ -66,43 +75,20 @@ namespace MPL\Common
       return isset($this->locations[$locationName]);
     }
 
-    private function onCompletedRequestPage(RequestPage $page): void {
-      $this->onRequestPageEventHandler($this->onCompletedRequestPageHandler, $page);
-    }
-
-    private function onLoadRequestPage(RequestPage $page): bool {
-      $returnValue = true;
-      
-      if ($this->onLoadRequestPageHandler) {
-        $returnValue = ($this->onLoadRequestPageHandler)($page);
-      }
-      
-      return $returnValue;
-    }
-
-    private function onPostRenderRequestPage(RequestPage $page): void {
-      $this->onRequestPageEventHandler($this->onPostRenderRequestPageHandler, $page);
-    }
-
-    private function onPreRenderRequestPage(RequestPage $page): void {
-      $this->onRequestPageEventHandler($this->onPreRenderRequestPageHandler, $page);
-    }
-
-    private function onRequestPageEventHandler(?callable $eventHandler, RequestPage $page): void {
-      if ($eventHandler) {
-        ($eventHandler)($page);
-      }      
-    }
-    
     private function serveLocation(string $locationName, ?RequestPage $associatedRequestPage = null): bool {
       $returnValue = false;
       
       // Try to get the location
       if ($this->tryGetLocation($locationName, $target)) {
         if ($this->tryLoadRequestPage($target, $locationPage)) {
-          // Determine whether to use associated page configuration (if exists)
-          if ($associatedRequestPage && !$locationPage->GetPageConfiguration()) {
-            $locationPage->SetPageConfiguration($associatedRequestPage->GetPageConfiguration());
+          // Determine whether to use associated page to provide additional configuration
+          if ($associatedRequestPage) {
+            // Set the page configuration
+            if (!$locationPage->GetPageConfiguration()) {
+              $locationPage->SetPageConfiguration($associatedRequestPage->GetPageConfiguration());
+            }
+            // Send to handler for additional configuration
+            $this->onConfigureRequestPageHandler->Invoke($locationPage);
           }
           
           $locationPage->RenderOutput();
@@ -122,7 +108,7 @@ namespace MPL\Common
       // Try to load the request page
       if ($this->tryLoadRequestPage($target, $page)) {
         // Ensure that the page is loaded
-        if ($this->onLoadRequestPage($page)) {
+        if ($this->onLoadRequestPageHandler->Invoke($page)) {
           
           // Serve the page header
           if ($page->GetPageHasFooter()) {
@@ -130,9 +116,9 @@ namespace MPL\Common
           }
 
           // Serve the page
-          $this->onPreRenderRequestPage($page);
+          $this->onPreRenderRequestPageHandler->Invoke($page);
           $page->RenderOutput();
-          $this->onPostRenderRequestPage($page);
+          $this->onPostRenderRequestPageHandler->Invoke($page);
 
           // Serve the footer page
           if ($page->GetPageHasFooter()) {
@@ -141,7 +127,7 @@ namespace MPL\Common
           
           // Mark as completed
           $returnValue = true;
-          $this->onCompletedRequestPage($page);
+          $this->onCompletedRequestPageHandler->Invoke($page);
         } else {
           // Page could not be served
           ErrorHandling::LogMessage("Could not serve '{$target}' due to failure from onLoadRequestPage");
@@ -211,19 +197,20 @@ namespace MPL\Common
       return $returnValue;
     }
 
-    private function verifyCallableRequestPageHandler(?callable $callable, bool $throwExceptionOnInvalid = true): ?callable {
+    private function verifyCallableRequestPageHandler(?callable $callable, bool $throwExceptionOnInvalid = true): EventWrapper {
       $returnValue = null;
-      
-      // Verify callable parameter
+
       if ($callable) {
         if (CallableFunctions::HasParameterCount($callable, 1) &&
             ReflectionFunctions::IsTypeInheritedFrom(CallableFunctions::GetParameterType($callable, 0), RequestPage::class)) {
-          $returnValue = $callable;
+          $returnValue = new EventWrapper($callable);
         } else if ($throwExceptionOnInvalid) {
           throw new \Exception("The specified callback is invalid");
         }
+      } else {
+        $returnValue = EventWrapper::UnboundEventWrapper();
       }
-      
+
       return $returnValue;
     }
 
@@ -266,6 +253,10 @@ namespace MPL\Common
 
     public function SetOnCompletedRequestPage(?callable $callable): void {
       $this->onCompletedRequestPageHandler = $this->verifyCallableRequestPageHandler($callable);
+    }
+
+    public function SetOnConfigureRequestPage(?callable $callable): void {
+      $this->onConfigureRequestPageHandler = $this->verifyCallableRequestPageHandler($callable);
     }
 
     public function SetOnLoadRequestPage(?callable $callable): void {
