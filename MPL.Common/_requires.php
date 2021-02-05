@@ -10,6 +10,7 @@
   RelativeMapping::RelativeRequire('/MPL.Common/CookieFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/DateFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Environment.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/EnumFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/ErrorHandling.php');
   RelativeMapping::RelativeRequire('/MPL.Common/HtmlFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/ObjectFunctions.php');
