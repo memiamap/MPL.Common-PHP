@@ -28,6 +28,20 @@ namespace MPL\Common
     }
 
     // Public functions
+    public static function GetUserIP(): string {
+    	$returnValue = 'Unknown';
+
+    	if (isset($_SERVER['HTTP_CLIENT_IP']) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
+    	  $returnValue = $_SERVER['HTTP_CLIENT_IP'];
+    	} elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    	  $returnValue = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    	} elseif (isset($_SERVER['REMOTE_ADDR']) && !empty($_SERVER['REMOTE_ADDR'])) {
+    	  $returnValue = $_SERVER['REMOTE_ADDR'];
+    	}
+
+    	return $returnValue;
+    }
+
     public static function ParseGet(string $name, &$value): bool {
       $returnValue = false;
       
