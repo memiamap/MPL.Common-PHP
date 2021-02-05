@@ -5,6 +5,8 @@
   RelativeMapping::RelativeRequire('/MPL.Common/ArrayFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Client.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Conversion.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/ControlBase.php');
+  RelativeMapping::RelativeRequire('/MPL.Common/ControlRequestHandler.php');
   RelativeMapping::RelativeRequire('/MPL.Common/CookieFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/DateFunctions.php');
   RelativeMapping::RelativeRequire('/MPL.Common/Environment.php');
