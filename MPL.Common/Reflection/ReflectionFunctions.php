@@ -31,6 +31,17 @@ namespace MPL\Common\Reflection
     }
 
     // Public functions
+    public static function GetShortClassName(?object $item): string {
+      $returnValue = null;
+      
+      if ($item) {
+        $rc = new \ReflectionClass($item);
+        $returnValue = $rc->getShortName();
+      }
+      
+      return $returnValue;
+    }
+
     public static function IsTypeInheritedFrom(string $typeName, string $baseTypeName): bool {
       $returnValue = false;
 
@@ -63,7 +74,7 @@ namespace MPL\Common\Reflection
 
       try {
         $var = null;
-        settype($f, $typeName);
+        settype($var, $typeName);
         $returnValue = true;
       } catch (\Throwable $t) {
       }
