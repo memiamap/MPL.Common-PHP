@@ -34,7 +34,7 @@ namespace MPL\Common
       // Default event handlers
       $this->onCompletedRequestPageHandler = EventWrapper::UnboundEventWrapper();
       $this->onConfigureRequestPageHandler = EventWrapper::UnboundEventWrapper();
-      $this->onLoadRequestPageHandler = EventWrapper::UnboundEventWrapper();
+      $this->onLoadRequestPageHandler = EventWrapper::ReturnBooleanDefaultEventWrapper(true, null);
       $this->onPostRenderRequestPageHandler = EventWrapper::UnboundEventWrapper();
       $this->onPreRenderRequestPageHandler = EventWrapper::UnboundEventWrapper();
     }
