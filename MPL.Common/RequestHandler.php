@@ -87,6 +87,12 @@ namespace MPL\Common
             if (!$locationPage->GetPageConfiguration()) {
               $locationPage->SetPageConfiguration($associatedRequestPage->GetPageConfiguration());
             }
+
+            // Set the page control request handler
+            if (!$locationPage->GetControlRequestHandler()) {
+              $locationPage->SetControlRequestHandler($associatedRequestPage->GetControlRequestHandler());
+            }
+
             // Send to handler for additional configuration
             $this->onConfigureRequestPageHandler->Invoke($locationPage);
           }

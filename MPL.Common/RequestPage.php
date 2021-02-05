@@ -8,10 +8,12 @@ namespace MPL\Common
   abstract class RequestPage
   {
     // Declarations
+    protected ?ControlRequestHandler $controlRequestHandler;
     protected ?PageConfigurationBase $pageConfiguration;
 
     // Constructors
     public function __construct() {
+      $this->controlRequestHandler = null;
       $this->pageConfiguration = null;
     }
 
@@ -25,6 +27,12 @@ namespace MPL\Common
     }
 
     // Public functions
+    public function GetControlRequestHandler(): ?ControlRequestHandler {
+      return $this->controlRequestHandler;
+    }
+
+    public abstract function GetOutput(): string;
+
     public function GetPageConfiguration(): ?PageConfigurationBase {
       return $this->pageConfiguration;
     }
@@ -37,7 +45,13 @@ namespace MPL\Common
       return $this->onGetPageHasHeader();
     }
 
-    public abstract function RenderOutput(): void;
+    public function RenderOutput(): void {
+      echo $this->GetOutput();
+    }
+
+    public function SetControlRequestHandler(?ControlRequestHandler $controlRequestHandler): void {
+      $this->controlRequestHandler = $controlRequestHandler;
+    }
 
     public function SetPageConfiguration(?PageConfigurationBase $pageConfiguration): void {
       $this->pageConfiguration = $pageConfiguration;
