@@ -61,7 +61,23 @@ namespace MPL\Common\Events
         return $returnValue;
       }
     }
-    
+
+    public static function ReturnBooleanDefaultEventWrapper(bool $result, ...$params): EventWrapper {
+      $returnValue = null;
+      
+      if ($params && count($params) > 0) {
+        if ($result) {
+          $returnValue = new EventWrapper(function(...$params): bool { return true; });
+        } else {
+          $returnValue = new EventWrapper(function(...$params): bool { return false; });
+        }
+      } else {
+        $returnValue = new EventWrapper(function(): bool { return $result; });
+      }
+
+      return $returnValue;
+    }
+
     public static function UnboundEventWrapper(): EventWrapper {
       return new EventWrapper(null);
     }
