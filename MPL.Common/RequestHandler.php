@@ -77,7 +77,7 @@ namespace MPL\Common
 
     private function serveLocation(string $locationName, ?RequestPage $associatedRequestPage = null): bool {
       $returnValue = false;
-      
+
       // Try to get the location
       if ($this->tryGetLocation($locationName, $target)) {
         if ($this->tryLoadRequestPage($target, $locationPage)) {
@@ -92,12 +92,15 @@ namespace MPL\Common
             if (!$locationPage->GetControlRequestHandler()) {
               $locationPage->SetControlRequestHandler($associatedRequestPage->GetControlRequestHandler());
             }
-
-            // Send to handler for additional configuration
-            $this->onConfigureRequestPageHandler->Invoke($locationPage);
           }
-          
+
+          // Send to handler for additional configuration
+          $this->onConfigureRequestPageHandler->Invoke($locationPage);
+
+          // Render the location output
           $locationPage->RenderOutput();
+          
+          $returnValue = true;
         } else {
           throw new \Exception("Unable to serve location '{$locationName}': Request page was not found");
         }
