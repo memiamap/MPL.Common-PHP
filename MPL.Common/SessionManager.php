@@ -6,6 +6,11 @@ namespace MPL\Common
   abstract class SessionManager
   {
     // Protected functions
+    protected function clearSessionValue(string $name): void {
+      $_SESSION[$name] = null;
+      unset($_SESSION[$name]);
+    }
+
   	protected function getSessionValue(string $name) {
   	  return $this->hasSessionValue($name) ? $_SESSION[$name] : null;
   	}
