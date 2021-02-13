@@ -12,7 +12,36 @@ namespace MPL\Common
       return !is_null($array1) && !is_null($array2) && count($array1) == count($array2);
     }
 
-    public static function TryParseElementAsBoolean(array $array, int $index, ?bool &$value): bool {
+    public static function SearchObjectArray(array $array, string $searchProperty, string $searchValue, string $outputProperty = null, &$outputValue): bool {
+      $returnValue = false;
+      
+      $index = array_search($searchValue, array_column($array, $searchProperty));
+      if ($index !== false) {
+        $returnValue = true;
+        if ($outputProperty) {
+          $outputValue = $array[$index]->{$outputProperty};
+        } else {
+          $outputValue = $array[$index];
+        }
+      }
+      
+      return $returnValue;
+    }
+
+    public static function TryParseElementAsBoolean(array $array, string $element, ?bool &$value): bool {
+      $returnValue = false;
+      
+			if (isset($array[$element])) {
+        if (Conversion::TryParseBoolean($array[$element], $outValue)) {
+          $value = $outValue;
+          $returnValue = true;
+        }
+      }
+      
+      return $returnValue;
+    }
+
+    public static function TryParseIndexAsBoolean(array $array, int $index, ?bool &$value): bool {
       $returnValue = false;
       
       if (count($array) >= $index) {
@@ -25,23 +54,20 @@ namespace MPL\Common
       return $returnValue;
     }
 
-    public static function SearchObjectArray(array $array, string $searchProperty, string $searchValue, string $outputProperty = null, &$outputValue): bool {
+    public static function TryParseElementAsFloat(array $array, string $element, ?float &$value): bool {
       $returnValue = false;
       
-      $index = array_search($searchValue, array_column($array, $searchProperty));
-      if ($index !== false) {
-        $returnValue = true;
-        if ($outputProperty) {
-          $outputValue = $arr[$index]->{$outputProperty};
-        } else {
-          $outputValue = $arr[$index];
+			if (isset($array[$element])) {
+        if (Conversion::TryParseFloat($array[$element], $outValue)) {
+          $value = $outValue;
+          $returnValue = true;
         }
       }
       
       return $returnValue;
     }
 
-    public static function TryParseElementAsFloat(array $array, int $index, ?float &$value): bool {
+    public static function TryParseIndexAsFloat(array $array, int $index, ?float &$value): bool {
       $returnValue = false;
       
       if (count($array) >= $index) {
@@ -54,7 +80,20 @@ namespace MPL\Common
       return $returnValue;
     }
 
-    public static function TryParseElementAsInteger(array $array, int $index, ?int &$value): bool {
+    public static function TryParseElementAsInteger(array $array, string $element, ?int &$value): bool {
+      $returnValue = false;
+      
+			if (isset($array[$element])) {
+        if (Conversion::TryParseInteger($array[$element], $outValue)) {
+          $value = $outValue;
+          $returnValue = true;
+        }
+      }
+      
+      return $returnValue;
+    }
+
+    public static function TryParseIndexAsInteger(array $array, int $index, ?int &$value): bool {
       $returnValue = false;
       
       if (count($array) >= $index) {
@@ -67,7 +106,20 @@ namespace MPL\Common
       return $returnValue;
     }
 
-    public static function TryParseElementAsString(array $array, int $index, ?string &$value, ?int $minimumSize = null, ?int $maximumSize = null): bool {
+    public static function TryParseElementAsString(array $array, string $element, ?string &$value, ?int $minimumSize = null, ?int $maximumSize = null): bool {
+      $returnValue = false;
+
+			if (isset($array[$element])) {
+        if (Conversion::TryParseString($array[$element], $outValue, $minimumSize, $maximumSize)) {
+          $value = $outValue;
+          $returnValue = true;
+        }
+      }
+      
+      return $returnValue;
+    }
+
+    public static function TryParseIndexAsString(array $array, int $index, ?string &$value, ?int $minimumSize = null, ?int $maximumSize = null): bool {
       $returnValue = false;
       
       if (count($array) >= $index) {
