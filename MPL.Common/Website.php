@@ -53,6 +53,11 @@ namespace MPL\Common
 	    return $returnValue;
     }
 
+    public static function ParseGetToInteger(string $name, ?int &$value): bool {
+      return self::ParseGet($name, $rawValue) &&
+             Conversion::TryParseInteger($rawValue, $value);
+    }
+
     public static function ParseGetToString(string $name, ?string &$value): bool {
       return self::ParseGet($name, $rawValue) &&
              Conversion::TryParseString($rawValue, $value);
