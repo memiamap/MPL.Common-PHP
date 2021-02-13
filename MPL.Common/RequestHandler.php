@@ -40,6 +40,17 @@ namespace MPL\Common
     }
 
     // Private functions
+    private function executePage(RequestPage $page): void {
+      // Execute the page prior to rendering output
+      $page->ExecutePage();
+      
+      if ($page->GetPageHasOutput()) {
+        $this->onPreRenderRequestPageHandler->Invoke($page);
+        $page->RenderOutput();
+        $this->onPostRenderRequestPageHandler->Invoke($page);
+      }
+    }
+
     private function getClassName(string $path): string {
       $returnValue = basename($path, '.php');
       if ($this->namespace) {
@@ -51,17 +62,18 @@ namespace MPL\Common
 
     private function getRequestPageName(): string {
       $returnValue = null;
-      
+
       if (isset($_SERVER['REQUEST_URI'])) {
+        $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
         $page = '';
         
-        foreach (explode('/', $_SERVER['REQUEST_URI']) as $part) {
+        foreach (explode('/', $uri) as $part) {
           if (strlen($part) > 0) {
             if (strlen($page) > 0) $page .= '__';
             $page .= $part;
           }
         }
-        
+
         $returnValue = RelativeMapping::MapRelativePath("{$this->baseLocation}{$page}.php");
       } else {
         ErrorHandling::LogMessage('Server REQUEST_URI index is missing');
@@ -97,8 +109,8 @@ namespace MPL\Common
           // Send to handler for additional configuration
           $this->onConfigureRequestPageHandler->Invoke($locationPage);
 
-          // Render the location output
-          $locationPage->RenderOutput();
+          // Serve the page
+          $this->executePage($locationPage);
           
           $returnValue = true;
         } else {
@@ -125,9 +137,7 @@ namespace MPL\Common
           }
 
           // Serve the page
-          $this->onPreRenderRequestPageHandler->Invoke($page);
-          $page->RenderOutput();
-          $this->onPostRenderRequestPageHandler->Invoke($page);
+          $this->executePage($page);
 
           // Serve the footer page
           if ($page->GetPageHasFooter()) {
@@ -230,6 +240,7 @@ namespace MPL\Common
       try {
         // Check the request page
         $pageName = $this->getRequestPageName();
+
         if (file_exists($pageName)) {
           // Serve the page
           $returnValue = $this->servePage($pageName);
