@@ -76,11 +76,11 @@ namespace MPL\Common
     }
 
     // Public functions
-    public function GetControlOutput(string $name): string {
+    public function GetControlOutput(string $name, RequestPage $requestPage): string {
       $returnValue = null;
 
       try {
-        $control = $this->LoadControl($name);
+        $control = $this->LoadControl($name, $requestPage);
         if ($control) {
           $returnValue = $control->GetOutput();
         } else {
@@ -94,7 +94,7 @@ namespace MPL\Common
       return $returnValue;
     }
     
-    public function LoadControl(string $name): ?ControlBase {
+    public function LoadControl(string $name, RequestPage $requestPage): ?ControlBase {
       $returnValue = null;
 
       try {
@@ -103,6 +103,7 @@ namespace MPL\Common
         if (file_exists($controlPath)) {
           // Try to load the control
           if ($this->tryLoadControl($name, $controlPath, $loadedControl)) {
+            $loadedControl->SetParent($requestPage);
             $returnValue = $loadedControl;
           } else {
             throw new \Exception("The specified control {$name} could not be created");
