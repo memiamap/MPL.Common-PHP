@@ -12,6 +12,15 @@ namespace MPL\Common
   		return "<link rel=\"stylesheet\" href=\"{$cssFilename}\">";
     }
     
+    public static function GeneratePageRedirectMeta(string $target, int $delaySeconds = 30): string {
+      return "<meta http-equiv=\"refresh\" content=\"{$delaySeconds}; url={$target}\" />";
+    }
+
+    public static function GeneratePageRedirectJS(string $target, int $delaySeconds = 30): string {
+      $delayMS = $delaySeconds * 1000;
+      return "<script>setInterval(function() { window.location.href = \"{$target}\"; }, {$delayMS})</script>";
+    }
+
     public static function GenerateScriptTag(string $scriptFilename): string {
   		return "<script src=\"{$scriptFilename}\"></script>";
     }
